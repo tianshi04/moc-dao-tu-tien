@@ -4,23 +4,23 @@
 **Mộc Đạo Tu Tiên** (Flora Cultivation)
 
 ## 2. Ý tưởng & Tầm nhìn (Vision & Concept)
-*   **Logline:** Ứng dụng Gamification biến việc chăm sóc cây xanh tại nhà thành một hành trình "Tu Tiên". Chậu cây của bạn là những thực thể đang ngày đêm hấp thu thiên địa linh khí để gia tăng Tu Vi.
-*   **Triết lý cốt lõi (Gamification):** 
-    *   Người chơi đóng vai trò là "Hộ Đạo Giả", giúp cây tu luyện bằng cách quan tâm và duy trì môi trường sống ("động phủ") lý tưởng cho chúng.
-    *   Không phải game "bấm bấm để nhận thưởng". Sức mạnh của cây (Tu Vi) phản ánh chính xác **chất lượng chăm sóc ngoài đời thực** của người dùng.
-*   **Triển khai thực tế:** Hệ thống hoạt động dựa trên các thiết bị IoT (cảm biến) được cắm trực tiếp vào một chậu cây thật ngoài đời. Chậu cây này sẽ trồng một loại cây có tuổi thọ dài (vd: Kim Tiền, Lưỡi Hổ...), đảm bảo người chơi có thể đồng hành và "hộ đạo" trong suốt quãng thời gian rất dài.
+*   **Logline:** Ứng dụng Gamification biến việc chăm sóc cây xanh tại nhà thành một hành trình "Tu Tiên". Chậu cây của bạn là một nhân vật đang ngày đêm tích lũy kinh nghiệm (Tu Vi) để mạnh lên.
+*   **Triết lý cốt lõi:**
+    *   Người dùng đóng vai trò là người chăm sóc cây — khi cây được sống trong môi trường tốt, cây sẽ tích lũy điểm Tu Vi nhanh hơn.
+    *   Không phải game "bấm bấm để nhận thưởng". Điểm Tu Vi phản ánh chính xác **chất lượng chăm sóc ngoài đời thực** của người dùng.
+*   **Triển khai thực tế:** Hệ thống hoạt động dựa trên các thiết bị IoT (cảm biến) được cắm trực tiếp vào một chậu cây thật. Chậu cây sẽ trồng một loại cây có tuổi thọ dài (vd: Kim Tiền, Lưỡi Hổ...), đảm bảo người dùng có thể gắn bó và theo dõi cây trong thời gian dài.
 
 ## 3. Lõi Gameplay (Core Loop cho MVP)
-Ở phiên bản MVP (Minimum Viable Product), hệ thống sẽ giản lược tối đa, tập trung duy nhất vào con số "Tu Vi" (EXP):
-1.  **Thu thập dữ liệu (Input đời thực):** Thiết bị IoT/Cảm biến đọc 2 chỉ số môi trường: **Độ ẩm** và **Ánh sáng**.
-2.  **Đánh giá Động Phủ (Logic):** So sánh dữ liệu thực tế với ngưỡng "Lý tưởng" của từng loại cây (Ví dụ: Cây Kim Tiền chuộng khô, cây Phát Tài chuộng ẩm...).
-3.  **Hội Tụ Linh Khí (Output MVP):** Hệ thống tiến hành cộng/trừ Tu Vi (EXP) theo thời gian (tính bằng phút) dựa vào môi trường. Giao diện thể hiện bằng một con số Tu Vi tăng/giảm liên tục.
+Ở phiên bản MVP, hệ thống tập trung duy nhất vào một con số: **Tu Vi** (điểm kinh nghiệm của cây):
+1.  **Thu thập dữ liệu:** Cảm biến IoT đo 2 chỉ số môi trường: **Độ ẩm đất** và **Ánh sáng**.
+2.  **Đánh giá môi trường sống:** Hệ thống so sánh dữ liệu thực tế với ngưỡng lý tưởng của từng loại cây (VD: Kim Tiền ưa khô, Phát Tài ưa ẩm...).
+3.  **Cộng/Trừ Tu Vi:** Dựa vào chất lượng môi trường, hệ thống cộng hoặc trừ điểm Tu Vi của cây mỗi chu kỳ (tính theo phút).
 
-## 4. Các tính năng chính (Phạm hiện MVP)
-Do là MVP nên cắt bỏ hoạt ảnh, hình thái phức tạp, tóm gọn trong 3 hệ thống tạo ra số:
-*   **Hệ thống Đo lường Môi trường:** Nhận luồng dữ liệu liên tục từ cảm biến. Phân loại thành các tầng trạng thái: *Đại Đạo Cảm Thông (Rất tốt), Tạm Ổn (Bình thường), Tẩu Hỏa (Nguy hiểm).*
-*   **Hệ thống Tu Vi (EXP):** Tích lũy điểm Tu Vi liên tục. Môi trường tốt Tu Vi tăng nhanh, môi trường xấu/nguy hiểm thì Tu Vi bị trừ (Tâm ma phạt).
-*   **Giao diện Trạng thái (Dashboard):** Hiển thị rõ ràng 3 thông tin:
-    *   Chỉ số môi trường hiện tại (Ẩm, Sáng).
-    *   Đánh giá trạng thái linh khí (Tốt/Xấu thế nào).
-    *   Tổng số Tu Vi đang sở hữu.
+## 4. Các tính năng chính (Phạm vi MVP)
+Tóm gọn trong 3 hệ thống cốt lõi:
+*   **Hệ thống Đo lường Môi trường:** Nhận dữ liệu liên tục từ cảm biến. Phân loại thành các mức chất lượng: *Rất tốt, Tốt, Bình thường, Xấu, Nguy hiểm.*
+*   **Hệ thống Tu Vi (Điểm EXP):** Điểm tích lũy theo thời gian. Môi trường tốt → cộng điểm nhanh; môi trường nguy hiểm → bị trừ điểm.
+*   **Giao diện Trạng thái (Dashboard):** Hiển thị 3 thông tin:
+    *   Chỉ số môi trường hiện tại (Độ ẩm, Ánh sáng).
+    *   Đánh giá chất lượng môi trường hiện tại (Tốt/Xấu ở mức nào).
+    *   Tổng điểm Tu Vi hiện có của cây.
