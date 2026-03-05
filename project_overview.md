@@ -17,10 +17,11 @@
 3.  **Cộng/Trừ Tu Vi:** Dựa vào chất lượng môi trường, hệ thống cộng hoặc trừ điểm Tu Vi của cây mỗi chu kỳ (tính theo phút).
 
 ## 4. Các tính năng chính (Phạm vi MVP)
-Tóm gọn trong 3 hệ thống cốt lõi:
+Tóm gọn trong 4 hệ thống cốt lõi:
 *   **Hệ thống Đo lường Môi trường:** Nhận dữ liệu liên tục từ cảm biến. Phân loại thành các mức chất lượng: *Rất tốt, Tốt, Bình thường, Xấu, Nguy hiểm.*
 *   **Hệ thống Tu Vi (Điểm EXP):** Điểm tích lũy theo thời gian. Môi trường tốt → cộng điểm nhanh; môi trường nguy hiểm → bị trừ điểm.
 *   **Giao diện Trạng thái (Dashboard):** Hiển thị 3 thông tin:
     *   Chỉ số môi trường hiện tại (Độ ẩm, Ánh sáng).
     *   Đánh giá chất lượng môi trường hiện tại (Tốt/Xấu ở mức nào).
     *   Tổng điểm Tu Vi hiện có của cây.
+*   **Định danh & Xác thực:** Người dùng đăng nhập bằng **tài khoản Google**, sau đó nhập **Plant Code** (in trên thiết bị) để liên kết chậu cây với tài khoản. Mỗi tài khoản quản lý 1 chậu cây trong phạm vi MVP.
