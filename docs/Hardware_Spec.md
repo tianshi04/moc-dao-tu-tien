@@ -16,7 +16,7 @@ Dưới đây là danh sách các linh kiện cốt lõi tạo thành thiết b�
 ### 2.1. Vi điều khiển trung tâm (MCU)
 * **Tên thiết bị:** Mạch phát triển ESP32-WROOM-32 (ESP32 Development Board)
 * **Tính năng chính:**
-  * Tích hợp sẵn Wi-Fi và Bluetooth, hoàn hảo cho các dự án IoT để kết nối với Backend Server qua HTTPS.
+  * Tích hợp sẵn Wi-Fi và Bluetooth, hoàn hảo cho các dự án IoT để kết nối với Backend Server qua giao thức MQTT siêu nhẹ.
   * Có hiệu năng xử lý mạnh mẽ, đủ số lượng chân I/O để giao tiếp với toàn bộ module cảm biến và màn hình hiển thị.
   * Hỗ trợ giao tiếp I2C, SPI, UART, Analog/Digital đầy đủ.
 
@@ -27,9 +27,8 @@ Dưới đây là danh sách các linh kiện cốt lõi tạo thành thiết b�
 * **Giao tiếp:** Analog (ADC).
 
 ### 2.3. Cảm biến ánh sáng 
-* **Tên thiết bị:** Cảm biến cường độ ánh sáng GY-2561 TSL2561
-* **Tham khảo:** [Link mua hàng / Xem chi tiết](https://icdayroi.com/cam-bien-cuong-do-anh-sang-gy-2561-tsl2561)
-* **Lý do lựa chọn:** Cảm biến TSL2561 trả về đơn vị nhận diện ánh sáng Lux chuẩn, cho độ chính xác cực cao, có khả năng đo lường dải sáng rộng tương đương với mắt người. Vượt trội hơn so với việc dùng module quang trở (LDR) chỉ cho ra điện áp biểu thị giá trị tương đối.
+* **Tên thiết bị:** Cảm biến cường độ ánh sáng BH1750 (Đã cập nhật thay thế cho TSL2561)
+* **Lý do lựa chọn:** BH1750 trả về đơn vị nhận diện ánh sáng Lux chuẩn, cho độ chính xác cực cao, có khả năng đo lường dải sáng rộng. Dễ dàng lập trình và giao tiếp qua I2C.
 * **Giao tiếp:** I2C.
 
 ### 2.4. Cảm biến độ ẩm & nhiệt độ môi trường
