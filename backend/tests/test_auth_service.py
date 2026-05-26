@@ -156,4 +156,7 @@ async def test_get_or_create_user_existing(mock_google_info):
 
     assert user.id == existing_user.id
     assert user.display_name == "Test User"  # should be updated
-    assert len(db.added) == 0  # No new user added
+    # Không gọi db.add(existing_user) khi cập nhật vì SQLAlchemy tự động theo dõi
+    # trạng thái thay đổi của đối tượng (dirty state tracking) thông qua Unit of Work
+    # và sẽ tự động sinh lệnh UPDATE khi commit/flush.
+    assert len(db.added) == 0

@@ -1,9 +1,14 @@
 import subprocess
+from pathlib import Path
+
+BACKEND_ROOT = Path(__file__).parent.parent
 
 
 def run_check(command: str):
     """Hàm bổ trợ để chạy lệnh và trả về kết quả."""
-    result = subprocess.run(command, shell=True, capture_output=True, text=True)
+    result = subprocess.run(
+        command, shell=True, capture_output=True, text=True, cwd=BACKEND_ROOT
+    )
     assert result.returncode == 0, (
         f"Thất bại tại lệnh: {command}\n{result.stdout}\n{result.stderr}"
     )
