@@ -87,7 +87,7 @@ def generate_sensor_value(min_val, max_val, condition="excellent"):
     - dynamic: Biến động tự nhiên ngẫu nhiên.
     """
     ideal_range = max_val - min_val
-    min_val + ideal_range / 2.0
+    center_val = min_val + ideal_range / 2.0
 
     if condition == "excellent":
         # Nằm hoàn hảo ở trung tâm lý tưởng
@@ -129,9 +129,12 @@ def generate_sensor_value(min_val, max_val, condition="excellent"):
             return round(max_val + (ideal_range * random.uniform(0.55, 0.85)), 1)
 
     else:
-        # Ngẫu nhiên bất kỳ
+        # Ngẫu nhiên bất kỳ, xung quanh trung tâm lý tưởng
         return round(
-            random.uniform(min_val - ideal_range * 0.6, max_val + ideal_range * 0.6), 1
+            random.uniform(
+                center_val - ideal_range * 0.6, center_val + ideal_range * 0.6
+            ),
+            1,
         )
 
 
