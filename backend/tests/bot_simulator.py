@@ -5,8 +5,9 @@ Script này đóng vai trò như một thiết bị cảm biến thực tế (ES
 Nó gửi dữ liệu cảm biến định kỳ lên Backend qua REST API hoặc MQTT.
 
 Chạy:
-    uv run python tests/test_bot.py --code <PLANT_CODE>
+    uv run python tests/bot_simulator.py --code <PLANT_CODE>
 """
+
 
 import argparse
 import asyncio
