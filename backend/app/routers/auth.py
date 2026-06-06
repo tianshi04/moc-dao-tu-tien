@@ -106,7 +106,7 @@ async def get_me(
         display_name=user.display_name,
         avatar_url=user.avatar_url,
         role=user.role,
-        has_plant=user.plant is not None,
+        has_plant=len(user.plants) > 0,
         created_at=user.created_at,
     )
 
