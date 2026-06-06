@@ -1,17 +1,12 @@
 import asyncio
 import logging
-import uuid
-import bcrypt
 from sqlalchemy import select
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.orm import sessionmaker
 
-from app.database import engine, async_session_factory
+from app.database import async_session_factory
 from app.services.admin_service import provision_device
 from app.services.plant_service import pair_plant
 from app.models.user import User
 from app.models.config import PlantType, RankConfig
-from app.models.plant import Plant
 
 logging.basicConfig(level=logging.INFO)
 

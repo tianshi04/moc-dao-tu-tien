@@ -4,6 +4,7 @@ import logging
 from uuid import UUID
 
 from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -12,8 +13,6 @@ from app.services.auth_service import decode_token, get_user_by_id
 
 logger = logging.getLogger(__name__)
 
-
-from fastapi.security import OAuth2PasswordBearer
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/auth/swagger-login")
 

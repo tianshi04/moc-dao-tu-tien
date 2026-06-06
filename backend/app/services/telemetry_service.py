@@ -15,7 +15,6 @@ from app.services.exp_service import (
     classify_sensors_for_plant_type,
     get_overall_quality,
 )
-from app.services import exp_service
 from app.services.sse_service import sse_manager
 
 logger = logging.getLogger(__name__)
