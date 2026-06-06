@@ -98,11 +98,9 @@ async def process_telemetry(
         )
         db.add(reading)
 
-    # 6. Cập nhật last_seen_at
+    # 6. Cập nhật last_seen_at và current_overall_quality
     device.last_seen_at = datetime.now(UTC)
-
-    # 7. Tính Tu Vi
-    exp_result = await exp_service.process_exp(db, plant, overall_quality)
+    plant.current_overall_quality = overall_quality
 
     # 8. Broadcast sensor update qua SSE
     await sse_manager.broadcast(
@@ -122,6 +120,5 @@ async def process_telemetry(
 
     return {
         "status": "ok",
-        "exp_awarded": exp_result["exp_awarded"],
         "message": f"Xử lý thành công. Chất lượng: {overall_quality}",
     }
