@@ -33,7 +33,7 @@ async def diy_provision_endpoint(
         return {
             "status": "success",
             "message": "Đã tạo mã liên kết thiết bị thành công. Hãy nạp Plant Code vào ESP32.",
-            "data": device_info
+            "data": device_info,
         }
     except ValueError as e:
         raise HTTPException(

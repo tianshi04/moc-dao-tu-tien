@@ -134,6 +134,7 @@ async def swagger_login(
     role = "admin" if form_data.password == "admin" else "user"
 
     from sqlalchemy import select
+
     stmt = select(User).where(User.email == email)
     res = await db.execute(stmt)
     user = res.scalar_one_or_none()
