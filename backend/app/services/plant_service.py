@@ -129,7 +129,7 @@ async def get_dashboard(db: AsyncSession, user: User) -> dict:
         )
     )
     result = await db.execute(stmt)
-    plant = result.scalar_one_or_none()
+    plant = result.scalars().first()
 
     if plant is None:
         raise ValueError("Chưa liên kết chậu cây")
