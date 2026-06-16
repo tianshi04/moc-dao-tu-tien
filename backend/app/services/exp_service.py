@@ -188,8 +188,9 @@ async def process_exp(
         last_seen = plant.device.last_seen_at
         if last_seen.tzinfo is None:
             from datetime import timezone
+
             last_seen = last_seen.replace(tzinfo=timezone.utc)
-        
+
         # Nếu thiết bị không gửi tín hiệu quá 6 phút (360 giây) -> Đóng băng
         if (now - last_seen).total_seconds() > 360:
             is_offline = True
