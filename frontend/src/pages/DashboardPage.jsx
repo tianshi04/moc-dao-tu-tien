@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { plantsApi, sseUrl } from '../services/api.js'
 import toast from 'react-hot-toast'
 import Navbar from '../components/ui/Navbar.jsx'
@@ -13,6 +13,7 @@ const SENSOR_KEYS = ['soil_moisture', 'temperature', 'light', 'humidity']
 
 export default function DashboardPage() {
   const navigate = useNavigate()
+  const { plantId } = useParams()
 
   const [dashboard, setDashboard] = useState(null)
   const [sensorLogs, setSensorLogs] = useState([])
@@ -29,7 +30,7 @@ export default function DashboardPage() {
     if (!newPlantName.trim()) return
     setRenaming(true)
     try {
-      await plantsApi.updatePlant({ name: newPlantName })
+      await plantsApi.updatePlant(plantId, { name: newPlantName })
       toast.success('Đổi tên cây thành công!')
       setShowRenameModal(false)
       fetchData(true)
@@ -61,15 +62,16 @@ export default function DashboardPage() {
   }
 
   const fetchData = async (silent = false) => {
+    if (!plantId) return
     if (!silent) setLoading(true)
     else setRefreshing(true)
 
     try {
-      const { data } = await plantsApi.getDashboard()
+      const { data } = await plantsApi.getDashboard(plantId)
       setDashboard(data)
 
       const histories = await Promise.allSettled(
-        SENSOR_KEYS.map((key) => plantsApi.getHistory(key, 24))
+        SENSOR_KEYS.map((key) => plantsApi.getHistory(plantId, key, 24))
       )
       setSensorLogs(buildLogs(histories).slice(-40))
     } catch (err) {
@@ -88,8 +90,12 @@ export default function DashboardPage() {
 
   // Tải dữ liệu ban đầu (dashboard + lịch sử cho chart)
   useEffect(() => {
+    if (!plantId) {
+      navigate('/plants', { replace: true })
+      return
+    }
     fetchData()
-  }, [])
+  }, [plantId])
 
   // Áp dụng 1 event SSE vào state (thay cho polling 30s trước đây)
   const applySensorUpdate = (payload) => {
@@ -142,11 +148,11 @@ export default function DashboardPage() {
   }
 
   // Kết nối SSE real-time khi đã biết plant_id
-  const plantId = dashboard?.plant_id
+  const streamPlantId = dashboard?.plant_id
   useEffect(() => {
-    if (!plantId) return
+    if (!streamPlantId) return
 
-    const es = new EventSource(sseUrl(plantId))
+    const es = new EventSource(sseUrl(streamPlantId))
 
     es.onopen = () => setLive(true)
     es.onerror = () => setLive(false) // EventSource sẽ tự kết nối lại
@@ -162,7 +168,7 @@ export default function DashboardPage() {
     }
 
     return () => es.close()
-  }, [plantId])
+  }, [streamPlantId])
 
   if (loading) return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>

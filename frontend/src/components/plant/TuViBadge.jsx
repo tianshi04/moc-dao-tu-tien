@@ -1,7 +1,6 @@
 export default function TuViBadge({ value = 0 }) {
   const level = value < 100 ? 1 : value < 500 ? 2 : value < 2000 ? 3 : value < 5000 ? 4 : 5
   const label = ['Mầm', 'Cây Non', 'Trưởng Thành', 'Linh Thảo', 'Thiên Mộc'][level - 1]
-  const stars = '★'.repeat(level) + '☆'.repeat(5 - level)
 
   return (
     <div style={{
@@ -25,7 +24,6 @@ export default function TuViBadge({ value = 0 }) {
       }}>
         {value.toLocaleString('vi-VN')}
       </div>
-      <div style={{ fontSize: 11, color: 'var(--green-500)', letterSpacing: 1 }}>{stars}</div>
       <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 2 }}>{label}</div>
     </div>
   )
