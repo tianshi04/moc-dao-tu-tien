@@ -81,7 +81,7 @@
 | **Đầu vào** | Plant Code (Mã định danh), Verify Code (Mã xác thực 6 số) |
 | **Đầu ra** | Chậu cây được gắn với tài khoản; Chuyển đến bước đặt tên cây |
 | **Cơ chế bảo mật** | Verify Code ngăn chặn việc kẻ tấn công đoán mò Plant Code để liên kết trái phép |
-| **Ràng buộc** | Mỗi tài khoản liên kết tối đa **1 chậu cây**; Mỗi bộ mã chỉ được sử dụng thành công 1 lần |
+| **Ràng buộc** | Mỗi tài khoản có thể liên kết **nhiều chậu cây** (1-N); Mỗi bộ mã chỉ được sử dụng thành công 1 lần |
 
 **User Stories:**
 - Là người dùng, tôi muốn nhập cả Plant Code và Verify Code để đảm bảo chỉ mình tôi mới có quyền liên kết chậu cây của mình.
@@ -436,7 +436,7 @@
 |---|---|
 | Phần cứng | Thiết bị IoT cắm trực tiếp vào chậu cây thật |
 | Loại cây | Cây tuổi thọ dài (Kim Tiền, Lưỡi Hổ…) |
-| Phạm vi | 1 tài khoản — 1 chậu cây |
+| Phạm vi | 1 tài khoản — Nhiều chậu cây |
 | Kết nối | Thiết bị cần kết nối Internet (WiFi) để gửi dữ liệu |
 
 ---
@@ -445,7 +445,6 @@
 
 Các tính năng sau **không** nằm trong phiên bản này:
 
-- Quản lý nhiều chậu cây trên một tài khoản
 - Thông báo đẩy (Push notification) ra ngoài ứng dụng
 - Điều khiển tự động (tự tưới nước, tự bật đèn)
 - Hỗ trợ đa ngôn ngữ

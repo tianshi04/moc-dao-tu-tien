@@ -48,7 +48,7 @@ Xây dựng một hệ thống IoT kết hợp Gamification, biến việc chăm
 - Người dùng liên kết chậu cây với tài khoản qua **Plant Code** (in trên thiết bị).
 - Sau khi liên kết, người dùng đặt tên cho cây và chọn loại cây.
 - Người dùng có thể thay đổi thông tin cây (tên, loại cây) sau khi liên kết.
-- Mỗi tài khoản quản lý **1 chậu cây**.
+- Mỗi tài khoản có thể quản lý **nhiều chậu cây**.
 
 ### 3.6. Định danh & Xác thực
 - Đăng nhập bằng **tài khoản Google**.
