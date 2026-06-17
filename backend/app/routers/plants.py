@@ -1,6 +1,7 @@
 """Router Plants — Liên kết cây, Dashboard, Lịch sử, Cập nhật."""
 
 import logging
+from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -14,6 +15,7 @@ from app.services.admin_service import get_plant_types, provision_device
 from app.services.plant_service import (
     get_dashboard,
     get_plant_history,
+    get_user_plants,
     pair_plant,
     update_plant,
 )
@@ -83,14 +85,34 @@ async def pair_plant_endpoint(
         ) from e
 
 
-@router.get("/me/dashboard")
+@router.get("")
+async def get_all_plants_endpoint(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+) -> list[dict]:
+    """Lấy danh sách tất cả chậu cây của người dùng."""
+    plants = await get_user_plants(db, user)
+    return [
+        {
+            "id": str(p.id),
+            "name": p.name,
+            "plant_type": p.plant_type.name if p.plant_type else None,
+            "total_exp": p.total_exp,
+            "rank": p.current_rank.name if p.current_rank else None,
+        }
+        for p in plants
+    ]
+
+
+@router.get("/{plant_id}/dashboard")
 async def get_dashboard_endpoint(
+    plant_id: UUID,
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ) -> dict:
     """Lấy dữ liệu Dashboard: chỉ số, Tu Vi, Cảnh Giới, tiến trình."""
     try:
-        return await get_dashboard(db, user)
+        return await get_dashboard(db, plant_id, user)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -98,8 +120,9 @@ async def get_dashboard_endpoint(
         ) from e
 
 
-@router.get("/me/history")
+@router.get("/{plant_id}/history")
 async def get_history_endpoint(
+    plant_id: UUID,
     sensor_key: str = Query(
         ..., description="Loại cảm biến: soil_moisture, light, temperature, humidity"
     ),
@@ -116,7 +139,7 @@ async def get_history_endpoint(
         )
 
     try:
-        return await get_plant_history(db, user, sensor_key, hours)
+        return await get_plant_history(db, plant_id, user, sensor_key, hours)
     except ValueError as e:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -124,8 +147,9 @@ async def get_history_endpoint(
         ) from e
 
 
-@router.put("/me")
+@router.put("/{plant_id}")
 async def update_plant_endpoint(
+    plant_id: UUID,
     body: PlantUpdateRequest,
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
@@ -134,6 +158,7 @@ async def update_plant_endpoint(
     try:
         plant = await update_plant(
             db=db,
+            plant_id=plant_id,
             user=user,
             name=body.name,
             plant_type_id=body.plant_type_id,

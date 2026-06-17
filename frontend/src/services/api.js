@@ -83,24 +83,27 @@ export const authApi = {
     api.post('/auth/refresh', { refresh_token: refreshToken }),
 }
 
-// ─── Plants (mô hình 1 user = 1 cây) ──────────────────────────────────────────
+// ─── Plants (hỗ trợ 1 user = N cây) ──────────────────────────────────────────
 export const plantsApi = {
   // GET /api/plants/types → danh sách loại cây để chọn khi liên kết
   getPlantTypes: () => api.get('/plants/types'),
 
-  // GET /api/plants/me/dashboard → chỉ số, Tu Vi, Cảnh Giới, sensors hiện tại
-  getDashboard: () => api.get('/plants/me/dashboard'),
+  // GET /api/plants → lấy danh sách tất cả các cây của user
+  listPlants: () => api.get('/plants'),
 
-  // GET /api/plants/me/history?sensor_key=&hours= → time series 1 loại cảm biến
-  getHistory: (sensorKey, hours = 24) =>
-    api.get('/plants/me/history', { params: { sensor_key: sensorKey, hours } }),
+  // GET /api/plants/{plant_id}/dashboard → chỉ số, Tu Vi, Cảnh Giới, sensors hiện tại
+  getDashboard: (plantId) => api.get(`/plants/${plantId}/dashboard`),
+
+  // GET /api/plants/{plant_id}/history?sensor_key=&hours= → time series 1 loại cảm biến
+  getHistory: (plantId, sensorKey, hours = 24) =>
+    api.get(`/plants/${plantId}/history`, { params: { sensor_key: sensorKey, hours } }),
 
   // POST /api/plants/pair { plant_code, verify_code, name, plant_type_id }
   pairPlant: ({ plant_code, verify_code, name, plant_type_id }) =>
     api.post('/plants/pair', { plant_code, verify_code, name, plant_type_id }),
 
-  // PUT /api/plants/me { name?, plant_type_id? }
-  updatePlant: (payload) => api.put('/plants/me', payload),
+  // PUT /api/plants/{plant_id} { name?, plant_type_id? }
+  updatePlant: (plantId, payload) => api.put(`/plants/${plantId}`, payload),
 }
 
 // ─── Leaderboard ──────────────────────────────────────────────────────────────

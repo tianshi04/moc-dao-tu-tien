@@ -113,7 +113,22 @@ async def pair_plant(
     return plant
 
 
-async def get_dashboard(db: AsyncSession, user: User) -> dict:
+async def get_user_plants(db: AsyncSession, user: User) -> list[Plant]:
+    """Lấy danh sách tất cả chậu cây của người dùng."""
+    stmt = (
+        select(Plant)
+        .where(Plant.user_id == user.id)
+        .options(
+            selectinload(Plant.plant_type),
+            selectinload(Plant.current_rank),
+        )
+        .order_by(Plant.created_at.desc())
+    )
+    result = await db.execute(stmt)
+    return list(result.scalars().all())
+
+
+async def get_dashboard(db: AsyncSession, plant_id: UUID, user: User) -> dict:
     """Lấy dữ liệu Dashboard cho người dùng.
 
     Returns:
@@ -122,7 +137,7 @@ async def get_dashboard(db: AsyncSession, user: User) -> dict:
     # Lấy plant với relationships
     stmt = (
         select(Plant)
-        .where(Plant.user_id == user.id)
+        .where(Plant.id == plant_id, Plant.user_id == user.id)
         .options(
             selectinload(Plant.plant_type),
             selectinload(Plant.current_rank),
@@ -130,7 +145,7 @@ async def get_dashboard(db: AsyncSession, user: User) -> dict:
         )
     )
     result = await db.execute(stmt)
-    plant = result.scalars().first()
+    plant = result.scalar_one_or_none()
 
     if plant is None:
         raise ValueError("Chưa liên kết chậu cây")
@@ -229,6 +244,7 @@ async def get_dashboard(db: AsyncSession, user: User) -> dict:
 
 async def get_plant_history(
     db: AsyncSession,
+    plant_id: UUID,
     user: User,
     sensor_key: str,
     hours: int = 24,
@@ -245,7 +261,7 @@ async def get_plant_history(
     # Lấy plant
     stmt = (
         select(Plant)
-        .where(Plant.user_id == user.id)
+        .where(Plant.id == plant_id, Plant.user_id == user.id)
         .options(selectinload(Plant.plant_type))
     )
     result = await db.execute(stmt)
@@ -300,6 +316,7 @@ async def get_plant_history(
 
 async def update_plant(
     db: AsyncSession,
+    plant_id: UUID,
     user: User,
     name: str | None = None,
     plant_type_id: UUID | None = None,
@@ -307,7 +324,7 @@ async def update_plant(
     """Cập nhật thông tin cây (tên, loại cây)."""
     stmt = (
         select(Plant)
-        .where(Plant.user_id == user.id)
+        .where(Plant.id == plant_id, Plant.user_id == user.id)
         .options(
             selectinload(Plant.plant_type),
             selectinload(Plant.current_rank),
