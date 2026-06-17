@@ -17,6 +17,7 @@ from app.models.user import User
 from app.services.exp_service import (
     get_next_rank,
     get_overall_quality,
+    classify_sensors_for_plant_type,
 )
 
 logger = logging.getLogger(__name__)
@@ -136,6 +137,8 @@ async def get_dashboard(db: AsyncSession, user: User) -> dict:
 
     # Lấy sensor readings mới nhất (1 bản ghi cho mỗi sensor_key)
     sensors = []
+    sensor_data = {}
+    readings = {}
     for key in ["soil_moisture", "light", "temperature", "humidity"]:
         stmt = (
             select(SensorReading)
@@ -149,14 +152,27 @@ async def get_dashboard(db: AsyncSession, user: User) -> dict:
         result = await db.execute(stmt)
         reading = result.scalar_one_or_none()
         if reading:
-            sensors.append(
-                {
-                    "sensor_key": key,
-                    "value": reading.value,
-                    "quality": reading.quality,
-                    "updated_at": reading.created_at.isoformat(),
-                }
-            )
+            sensor_data[key] = reading.value
+            readings[key] = reading
+
+    # Tính toán lại chất lượng dựa trên ngưỡng MỚI NHẤT của loại cây
+    # Để nếu Admin vừa đổi ngưỡng, Dashboard sẽ phản hồi ngay lập tức
+    recalculated_qualities = classify_sensors_for_plant_type(sensor_data, plant.plant_type)
+
+    for key, reading in readings.items():
+        # Riêng ánh sáng lỗi -999.0 thì set cứng ERROR
+        q = recalculated_qualities.get(key, reading.quality)
+        if key != "light" and reading.value == -999.0:
+            q = "ERROR"
+            
+        sensors.append(
+            {
+                "sensor_key": key,
+                "value": reading.value,
+                "quality": q,
+                "updated_at": reading.created_at.isoformat(),
+            }
+        )
 
     # Tính overall quality từ sensors hiện tại
     qualities = [s["quality"] for s in sensors]
