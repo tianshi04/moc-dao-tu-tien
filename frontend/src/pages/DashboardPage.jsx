@@ -162,6 +162,15 @@ export default function DashboardPage() {
     .sort()
     .at(-1)
 
+  // Tính thanh EXP
+  const totalExp = dashboard?.total_exp ?? 0
+  const currentRankMinExp = dashboard?.current_rank?.min_exp ?? 0
+  const nextRankMinExp = dashboard?.next_rank?.min_exp ?? null
+  const expProgress = nextRankMinExp !== null
+    ? Math.min(100, ((totalExp - currentRankMinExp) / (nextRankMinExp - currentRankMinExp)) * 100)
+    : 100
+  const expToNext = dashboard?.exp_to_next_rank ?? null
+
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg-base)' }}>
       <Navbar />
@@ -176,104 +185,156 @@ export default function DashboardPage() {
           padding: '28px 28px 24px',
           marginBottom: 24,
           display: 'flex',
-          alignItems: 'flex-start',
-          justifyContent: 'space-between',
+          flexDirection: 'column',
           gap: 20,
-          flexWrap: 'wrap',
           boxShadow: 'var(--shadow-sm)',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-            <div style={{
-              width: 64, height: 64,
-              background: 'var(--green-50)',
-              border: '1.5px solid var(--green-200)',
-              borderRadius: '50%',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: 30,
-              flexShrink: 0,
-            }}>
-              🪴
-            </div>
-            <div>
-              <h1 style={{ fontSize: 26, marginBottom: 4, color: 'var(--text-primary)' }}>
-                {dashboard?.plant_name || 'Chậu cây của tôi'}
-              </h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
-                <span style={{
-                  background: 'var(--green-50)',
-                  border: '1px solid var(--green-200)',
-                  color: 'var(--text-secondary)',
-                  borderRadius: 20,
-                  padding: '2px 10px',
-                  fontSize: 12.5,
-                  fontWeight: 500,
-                }}>
-                  {dashboard?.plant_type?.name || 'Không rõ loài'}
-                </span>
-                <span style={{
-                  fontSize: 12,
-                  color: 'var(--text-muted)',
-                  background: 'var(--bg-soft)',
-                  padding: '2px 8px',
-                  borderRadius: 6,
-                }}>
-                  Cảnh giới: {dashboard?.current_rank?.name || '—'}
-                </span>
-                <span style={{
-                  fontSize: 11.5,
-                  color: dashboard?.device_online ? 'var(--green-600)' : 'var(--text-muted)',
-                  display: 'flex', alignItems: 'center', gap: 5,
-                }}>
-                  <span style={{
-                    width: 7, height: 7, borderRadius: '50%',
-                    background: dashboard?.device_online ? 'var(--green-500)' : '#c0392b',
-                    display: 'inline-block',
-                  }} />
-                  {dashboard?.device_online ? 'Online' : 'Offline'}
-                </span>
+          {/* Top row: plant info + actions */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 20, flexWrap: 'wrap' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
+              <div style={{
+                width: 64, height: 64,
+                background: 'var(--green-50)',
+                border: '1.5px solid var(--green-200)',
+                borderRadius: '50%',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                fontSize: 30,
+                flexShrink: 0,
+              }}>
+                🪴
               </div>
+              <div>
+                <h1 style={{ fontSize: 26, marginBottom: 4, color: 'var(--text-primary)' }}>
+                  {dashboard?.plant_name || 'Chậu cây của tôi'}
+                </h1>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <span style={{
+                    background: 'var(--green-50)',
+                    border: '1px solid var(--green-200)',
+                    color: 'var(--text-secondary)',
+                    borderRadius: 20,
+                    padding: '2px 10px',
+                    fontSize: 12.5,
+                    fontWeight: 500,
+                  }}>
+                    {dashboard?.plant_type?.name || 'Không rõ loài'}
+                  </span>
+                  <span style={{
+                    fontSize: 12,
+                    color: 'var(--text-muted)',
+                    background: 'var(--bg-soft)',
+                    padding: '2px 8px',
+                    borderRadius: 6,
+                  }}>
+                    Cảnh giới: {dashboard?.current_rank?.name || '—'}
+                  </span>
+                  <span style={{
+                    fontSize: 11.5,
+                    color: dashboard?.device_online ? 'var(--green-600)' : 'var(--text-muted)',
+                    display: 'flex', alignItems: 'center', gap: 5,
+                  }}>
+                    <span style={{
+                      width: 7, height: 7, borderRadius: '50%',
+                      background: dashboard?.device_online ? 'var(--green-500)' : '#c0392b',
+                      display: 'inline-block',
+                    }} />
+                    {dashboard?.device_online ? 'Online' : 'Offline'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+              <span style={{
+                fontSize: 11.5,
+                color: live ? 'var(--green-600)' : 'var(--text-muted)',
+                display: 'flex', alignItems: 'center', gap: 5,
+              }}
+                title={live ? 'Đang nhận dữ liệu real-time (SSE)' : 'Mất kết nối real-time, đang thử lại…'}
+              >
+                <span style={{
+                  width: 7, height: 7, borderRadius: '50%',
+                  background: live ? 'var(--green-500)' : 'var(--text-muted)',
+                  display: 'inline-block',
+                  animation: live ? 'pulse 1.6s ease-in-out infinite' : 'none',
+                }} />
+                {live ? 'Live' : 'Offline'}
+              </span>
+              <TuViBadge value={dashboard?.total_exp || 0} />
+              <button
+                onClick={() => fetchData(true)}
+                title="Làm mới dữ liệu"
+                style={{
+                  width: 36, height: 36,
+                  border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-sm)',
+                  background: 'var(--bg-surface)',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer',
+                  color: 'var(--text-muted)',
+                  transition: 'all 0.2s',
+                }}
+                onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--green-400)'; e.currentTarget.style.color = 'var(--accent)' }}
+                onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-muted)' }}
+              >
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
+                  style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }}>
+                  <path d="M13.6 2.4A7 7 0 1 0 14.5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+                  <polyline points="10,0 14.5,2.5 12,7" fill="currentColor" />
+                </svg>
+              </button>
             </div>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <span style={{
-              fontSize: 11.5,
-              color: live ? 'var(--green-600)' : 'var(--text-muted)',
-              display: 'flex', alignItems: 'center', gap: 5,
-            }}
-              title={live ? 'Đang nhận dữ liệu real-time (SSE)' : 'Mất kết nối real-time, đang thử lại…'}
-            >
-              <span style={{
-                width: 7, height: 7, borderRadius: '50%',
-                background: live ? 'var(--green-500)' : 'var(--text-muted)',
-                display: 'inline-block',
-                animation: live ? 'pulse 1.6s ease-in-out infinite' : 'none',
+          {/* EXP bar */}
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: 6 }}>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)', fontWeight: 500 }}>
+                Tu Vi (EXP)
+              </span>
+              <span style={{ fontSize: 12, color: 'var(--text-muted)' }}>
+                {totalExp.toLocaleString('vi-VN')}
+                {nextRankMinExp !== null && (
+                  <> / {nextRankMinExp.toLocaleString('vi-VN')} EXP</>
+                )}
+              </span>
+            </div>
+            <div style={{
+              position: 'relative',
+              height: 10,
+              background: 'var(--bg-soft)',
+              borderRadius: 99,
+              overflow: 'hidden',
+              border: '1px solid var(--border)',
+            }}>
+              <div style={{
+                position: 'absolute',
+                left: 0, top: 0, bottom: 0,
+                width: `${expProgress}%`,
+                background: nextRankMinExp === null
+                  ? 'linear-gradient(90deg, var(--green-400), var(--green-600))'
+                  : 'linear-gradient(90deg, var(--green-300), var(--green-500))',
+                borderRadius: 99,
+                transition: 'width 0.6s ease',
               }} />
-              {live ? 'Live' : 'Offline'}
-            </span>
-            <TuViBadge value={dashboard?.total_exp || 0} />
-            <button
-              onClick={() => fetchData(true)}
-              title="Làm mới dữ liệu"
-              style={{
-                width: 36, height: 36,
-                border: '1px solid var(--border)',
-                borderRadius: 'var(--radius-sm)',
-                background: 'var(--bg-surface)',
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                cursor: 'pointer',
-                color: 'var(--text-muted)',
-                transition: 'all 0.2s',
-              }}
-              onMouseEnter={e => { e.currentTarget.style.borderColor = 'var(--green-400)'; e.currentTarget.style.color = 'var(--accent)' }}
-              onMouseLeave={e => { e.currentTarget.style.borderColor = 'var(--border)'; e.currentTarget.style.color = 'var(--text-muted)' }}
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none"
-                style={{ animation: refreshing ? 'spin 1s linear infinite' : 'none' }}>
-                <path d="M13.6 2.4A7 7 0 1 0 14.5 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-                <polyline points="10,0 14.5,2.5 12,7" fill="currentColor" />
-              </svg>
-            </button>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 5 }}>
+              <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                {dashboard?.current_rank?.name || '—'}
+              </span>
+              {nextRankMinExp !== null ? (
+                <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>
+                  {expToNext !== null && expToNext > 0
+                    ? `Còn ${expToNext.toLocaleString('vi-VN')} EXP → `
+                    : ''}
+                  {dashboard?.next_rank?.name}
+                </span>
+              ) : (
+                <span style={{ fontSize: 11, color: 'var(--green-600)', fontWeight: 500 }}>
+                  Cảnh giới tối cao ✦
+                </span>
+              )}
+            </div>
           </div>
         </div>
 
@@ -340,7 +401,6 @@ export default function DashboardPage() {
           flexWrap: 'wrap', gap: 8,
           fontSize: 12.5, color: 'var(--text-muted)',
         }}>
-          <span>Tu Vi (EXP): <code style={{ fontSize: 11 }}>{(dashboard?.total_exp ?? 0).toLocaleString('vi-VN')}</code></span>
           <span>
             Thiết bị: {dashboard?.device_last_seen
               ? new Date(dashboard.device_last_seen).toLocaleString('vi-VN')
