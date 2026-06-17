@@ -27,10 +27,11 @@ Dưới đây là danh sách các linh kiện cốt lõi tạo thành thiết b�
 * **Giao tiếp:** Analog (ADC).
 
 ### 2.3. Cảm biến ánh sáng 
-* **Tên thiết bị:** Cảm biến cường độ ánh sáng GY-2561 TSL2561
-* **Tham khảo:** [Link mua hàng / Xem chi tiết](https://icdayroi.com/cam-bien-cuong-do-anh-sang-gy-2561-tsl2561)
-* **Lý do lựa chọn:** Cảm biến TSL2561 trả về đơn vị nhận diện ánh sáng Lux chuẩn, cho độ chính xác cực cao, có khả năng đo lường dải sáng rộng tương đương với mắt người. Vượt trội hơn so với việc dùng module quang trở (LDR) chỉ cho ra điện áp biểu thị giá trị tương đối.
+* **Tên thiết bị:** Cảm biến cường độ ánh sáng BH1750 (GY-302)
+* **Tham khảo:** [Link mua hàng / Xem chi tiết](https://nshopvn.com/product/cam-bien-anh-sang-bh1750/)
+* **Lý do lựa chọn:** Cảm biến BH1750 trả về đơn vị nhận diện ánh sáng Lux chuẩn trực tiếp với độ phân giải cao (lên đến 65535 lux), thư viện hỗ trợ phong phú và dễ dàng giao tiếp qua I2C. Vượt trội hơn so với việc dùng module quang trở (LDR) chỉ cho ra điện áp biểu thị giá trị tương đối.
 * **Giao tiếp:** I2C.
+* **Đặc tả Logic**: Cảm biến ánh sáng BH1750 bị loại bỏ (bypassed) khỏi tất cả các logic đánh giá chất lượng tổng hợp môi trường và logic đóng băng Tu Vi trên cả Firmware và Backend để tránh nhiễu phần cứng làm gián đoạn tu luyện. Dữ liệu chỉ dùng lưu trữ thô và hiển thị thô. Thiết bị gửi giá trị `-999.0` khi cảm biến này lỗi.
 
 ### 2.4. Cảm biến độ ẩm & nhiệt độ môi trường
 * **Tên thiết bị:** Cảm biến DHT22 (AM2302)
@@ -40,18 +41,27 @@ Dưới đây là danh sách các linh kiện cốt lõi tạo thành thiết b�
 ### 2.5. Giao diện hiển thị trên thiết bị
 * **Tên thiết bị:** Màn hình LCD Oled 0.96 inch 2 màu (Vàng - Xanh dương)
 * **Tham khảo:** [Link mua hàng / Xem chi tiết](https://icdayroi.com/man-hinh-lcd-oled-0-96-inch-2-mau-vang-xanh-duong)
-* **Mục đích:** Gắn trên thiết bị để trực tiếp hiển thị các thông tin tổng quan nhất cho người dùng, bao gồm:
-  * Trạng thái kết nối (WiFi, Online).
-  * Tu Vi hiện tại.
-  * Tên Cảnh Giới (Luyện Khí, Trúc Cơ...).
-  * Trạng thái hệ thống (Plant Code dùng cho việc pair chậu cây với tài khoản).
 * **Giao tiếp:** I2C.
+* **Chi tiết hiển thị và các màn hình thiết kế**:
+  * **Màn hình Khởi động (Booting)**: Hiển thị chữ "MOC DAO TU TIEN" + thanh tiến trình từ 0% đến 100% cùng hoạt ảnh đâm chồi của mầm cây kéo dài trong 2 giây khi cắm nguồn.
+  * **Màn hình Trạng thái WiFi**:
+    * *Đang kết nối*: hiển thị SSID và cột sóng WiFi động (frame-by-frame 0-3 vạch).
+    * *Kết nối thất bại*: thông báo kết nối lỗi và bộ đếm ngược 3 giây trước lần thử tiếp theo.
+    * *AP Config Portal*: hiển thị tên Access Point và IP cấu hình mặc định (`192.168.4.1`) khi chờ người dùng cấu hình WiFi.
+  * **Màn hình Chính (Main screen)**: Thiết kế tối giản, loại bỏ hoàn toàn các thông số thô của cảm biến, chỉ bao gồm:
+    * *Dòng 1*: Trạng thái môi trường tổng hợp và hệ số tăng giảm EXP: `TT: OPTIMAL (+1.0)` / `TT: GOOD (+0.5)` / `TT: FAIR (+0.0)` / `TT: POOR (-0.3)` / `TT: DANGER (-0.8)` / `TT: SENSOR ERROR` / `TT: OFFLINE`.
+    * *Dòng 2*: Bậc cảnh giới hiện tại và EXP tích lũy dạng số thực: `<rank_name> : <total_exp>` (ví dụ: `Luyen Khi : 123.5`).
+    * *1/2 Màn hình dưới*: Hoạt ảnh động của mầm cây:
+      - Đung đưa lá và bắn các hạt linh khí (particles) bay ngược lên tượng trưng cho hấp thụ linh khí trời đất khi ở trạng thái `OPTIMAL` (3 hạt) hoặc `GOOD` (1 hạt).
+      - Đứng yên khi ở trạng thái `FAIR`/`POOR` (lá rủ nhẹ ở POOR).
+      - Héo úa và gục đầu đi kèm biểu tượng cảnh báo nhấp nháy ở trạng thái `DANGER`/`ERROR`.
+      - Héo úa đi kèm biểu tượng cột sóng WiFi bị gạch chéo nhấp nháy ở trạng thái `OFFLINE`.
 
 ---
 
 ## 3. Kiến trúc giao tiếp và lắp ráp dự kiến (Expected Topology)
 
-* **Giao thức I2C:** Màn hình OLED và Cảm biến ánh sáng TSL2561 sẽ chia sẻ cùng một Data bus (I2C SDA/SCL) giúp tiết kiệm số lượng dây nối với ESP32.
+* **Giao thức I2C:** Màn hình OLED và Cảm biến ánh sáng BH1750 sẽ chia sẻ cùng một Data bus (I2C SDA/SCL) giúp tiết kiệm số lượng dây nối với ESP32.
 * **Giao thức Analog:** Cảm biến độ ẩm đất điện dung xuất thông tin qua điện áp sẽ được kết nối vào ngõ vào ADC của ESP32.
 * **Giao thức Digital:** Cảm biến DHT22 sử dụng một cổng digital output riêng biệt.
 
