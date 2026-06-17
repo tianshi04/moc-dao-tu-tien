@@ -304,7 +304,7 @@ def classify_sensors_for_plant_type(
     qualities = {}
     for key, value in sensor_data.items():
         if key == "light":
-            continue  # Bỏ qua cảm biến ánh sáng, không cho tham gia đánh giá chất lượng môi trường
+            continue  # Bỏ qua cảm biến ánh sáng do phần cứng đang hư
         if key in thresholds:
             min_val, max_val = thresholds[key]
             qualities[key] = classify_sensor_quality(value, min_val, max_val)

@@ -1,11 +1,12 @@
-export default function SensorCard({ label, value, unit, icon, min = 0, max = 100, warnBelow, warnAbove }) {
+export default function SensorCard({ label, value, unit, icon, min = 0, max = 100, quality }) {
   const hasData = value !== null && value !== undefined
 
   const getStatus = () => {
     if (!hasData) return 'none'
-    if (warnBelow !== undefined && value < warnBelow) return 'low'
-    if (warnAbove !== undefined && value > warnAbove) return 'high'
-    return 'ok'
+    if (quality === 'DANGER') return 'high' // Use red for danger
+    if (quality === 'POOR') return 'low' // Use orange for poor
+    if (quality === 'FAIR') return 'low' // Use orange for fair
+    return 'ok' // EXCELLENT, GOOD
   }
 
   const status = getStatus()
@@ -65,11 +66,10 @@ export default function SensorCard({ label, value, unit, icon, min = 0, max = 10
         }} />
       </div>
 
-      {status === 'low' && (
-        <p style={{ fontSize: 11, color: '#e67e22', marginTop: 6 }}>⚠ Thấp hơn mức bình thường</p>
-      )}
-      {status === 'high' && (
-        <p style={{ fontSize: 11, color: '#e74c3c', marginTop: 6 }}>⚠ Cao hơn mức bình thường</p>
+      {(status === 'low' || status === 'high') && (
+        <p style={{ fontSize: 11, color: col.text, marginTop: 6 }}>
+          ⚠ {value > max ? 'Cao hơn mức bình thường' : value < min ? 'Thấp hơn mức bình thường' : 'Chỉ số không tối ưu'}
+        </p>
       )}
     </div>
   )

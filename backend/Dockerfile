@@ -1,5 +1,8 @@
-# Stage 1: Build dependencies using the official astral-sh/uv image
-FROM ghcr.io/astral-sh/uv:python3.12-alpine AS builder
+# Stage 1: Build dependencies using standard python alpine image
+FROM python:3.12-alpine AS builder
+
+# Install uv manually to avoid ghcr.io network timeouts
+RUN pip install uv
 
 ENV UV_COMPILE_BYTECODE=1
 ENV UV_LINK_MODE=copy

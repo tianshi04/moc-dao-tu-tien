@@ -87,7 +87,7 @@ async def process_telemetry(
     qualities = classify_sensors_for_plant_type(sensor_data, plant.plant_type)
     overall_quality = get_overall_quality(list(qualities.values()))
 
-    # Kiểm tra xem có lỗi cảm biến nào không (giá trị -999.0, loại trừ cảm biến light)
+    # Kiểm tra xem có lỗi cảm biến nào không (giá trị -999.0, loại trừ ánh sáng do cảm biến hư)
     has_sensor_error = any(
         val == -999.0 for key, val in sensor_data.items() if key != "light"
     )
