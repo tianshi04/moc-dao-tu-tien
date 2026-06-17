@@ -20,6 +20,26 @@ export default function DashboardPage() {
   const [refreshing, setRefreshing] = useState(false)
   const [live, setLive] = useState(false) // trạng thái kết nối SSE
 
+  const [showRenameModal, setShowRenameModal] = useState(false)
+  const [newPlantName, setNewPlantName] = useState('')
+  const [renaming, setRenaming] = useState(false)
+
+  const handleRename = async (e) => {
+    e.preventDefault()
+    if (!newPlantName.trim()) return
+    setRenaming(true)
+    try {
+      await plantsApi.updatePlant({ name: newPlantName })
+      toast.success('Đổi tên cây thành công!')
+      setShowRenameModal(false)
+      fetchData(true)
+    } catch (error) {
+      toast.error('Đổi tên thất bại')
+    } finally {
+      setRenaming(false)
+    }
+  }
+
   // Gộp lịch sử 4 cảm biến thành các hàng theo timestamp để vẽ chart
   const buildLogs = (histories) => {
     const byTime = new Map()
@@ -204,8 +224,15 @@ export default function DashboardPage() {
                 🪴
               </div>
               <div>
-                <h1 style={{ fontSize: 26, marginBottom: 4, color: 'var(--text-primary)' }}>
+                <h1 style={{ fontSize: 26, marginBottom: 4, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 8 }}>
                   {dashboard?.plant_name || 'Chậu cây của tôi'}
+                  <button
+                    onClick={() => { setNewPlantName(dashboard?.plant_name || ''); setShowRenameModal(true) }}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, padding: 4, color: 'var(--text-muted)' }}
+                    title="Đổi tên cây"
+                  >
+                    ✏️
+                  </button>
                 </h1>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                   <span style={{
@@ -347,18 +374,22 @@ export default function DashboardPage() {
         }}>
           <SensorCard
             label="Độ ẩm đất" value={sensorMap.soil_moisture?.value ?? null}
-            unit="%" icon="💧" min={0} max={100} warnBelow={20} warnAbove={80}
+            quality={sensorMap.soil_moisture?.quality}
+            unit="%" icon="💧" min={0} max={100}
           />
           <SensorCard
             label="Nhiệt độ" value={sensorMap.temperature?.value ?? null}
-            unit="°C" icon="🌡️" min={10} max={45} warnBelow={15} warnAbove={38}
+            quality={sensorMap.temperature?.quality}
+            unit="°C" icon="🌡️" min={10} max={45}
           />
           <SensorCard
             label="Ánh sáng" value={sensorMap.light?.value ?? null}
+            quality={sensorMap.light?.quality}
             unit="lux" icon="☀️" min={0} max={10000}
           />
           <SensorCard
             label="Độ ẩm KK" value={sensorMap.humidity?.value ?? null}
+            quality={sensorMap.humidity?.quality}
             unit="%" icon="🌫️" min={0} max={100}
           />
         </div>
@@ -408,6 +439,59 @@ export default function DashboardPage() {
           </span>
         </div>
       </div>
+
+      {/* Rename Modal */}
+      {showRenameModal && (
+        <div style={{
+          position: 'fixed', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center',
+          zIndex: 9999
+        }}>
+          <div style={{
+            background: 'var(--bg-surface)', padding: 24, borderRadius: 'var(--radius-lg)',
+            width: '100%', maxWidth: 400, boxShadow: 'var(--shadow-lg)'
+          }}>
+            <h3 style={{ marginBottom: 16, fontSize: 18, color: 'var(--text-primary)' }}>Đổi tên cây</h3>
+            <form onSubmit={handleRename}>
+              <input
+                type="text"
+                value={newPlantName}
+                onChange={e => setNewPlantName(e.target.value)}
+                placeholder="Nhập tên mới..."
+                autoFocus
+                style={{
+                  width: '100%', padding: '10px 12px', border: '1px solid var(--border)',
+                  borderRadius: 'var(--radius-md)', marginBottom: 20,
+                  fontSize: 15, background: 'var(--bg-base)', color: 'var(--text-primary)'
+                }}
+              />
+              <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
+                <button
+                  type="button"
+                  onClick={() => setShowRenameModal(false)}
+                  style={{
+                    padding: '8px 16px', background: 'var(--bg-soft)', color: 'var(--text-primary)',
+                    border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer'
+                  }}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={renaming || !newPlantName.trim()}
+                  style={{
+                    padding: '8px 16px', background: 'var(--accent)', color: 'white',
+                    border: 'none', borderRadius: 'var(--radius-md)', cursor: 'pointer',
+                    opacity: (renaming || !newPlantName.trim()) ? 0.7 : 1
+                  }}
+                >
+                  {renaming ? 'Đang lưu...' : 'Lưu'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

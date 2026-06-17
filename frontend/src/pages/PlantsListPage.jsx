@@ -46,7 +46,7 @@ export default function PlantsListPage() {
               {plant ? 'Bạn đang chăm sóc 1 chậu cây' : 'Bạn chưa liên kết chậu cây nào'}
             </p>
           </div>
-          {!plant && (
+          <div>
             <button
               onClick={() => navigate('/claim')}
               style={{
@@ -59,7 +59,7 @@ export default function PlantsListPage() {
             >
               <span>+</span> Liên kết cây
             </button>
-          )}
+          </div>
         </div>
 
         {!plant ? (

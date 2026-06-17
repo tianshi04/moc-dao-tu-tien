@@ -34,6 +34,7 @@ class Settings(BaseSettings):
         "http://localhost:3000",
         "http://localhost:5173",
     ]
+    admin_email: str | None = None
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

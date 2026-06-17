@@ -223,6 +223,7 @@ async def create_plant_type(db: AsyncSession, data: dict) -> PlantType:
     plant_type = PlantType(**data)
     db.add(plant_type)
     await db.flush()
+    await db.refresh(plant_type)
     logger.info("🌿 Loại cây mới: %s", plant_type.name)
     return plant_type
 
@@ -243,6 +244,7 @@ async def update_plant_type(db: AsyncSession, type_id: str, data: dict) -> Plant
             setattr(plant_type, key, value)
 
     await db.flush()
+    await db.refresh(plant_type)
     return plant_type
 
 

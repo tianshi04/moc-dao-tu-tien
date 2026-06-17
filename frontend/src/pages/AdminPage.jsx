@@ -313,6 +313,7 @@ function PlantTypesTab() {
   const [types, setTypes] = useState([])
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(null) // null | {id?, ...fields}
+  const [saving, setSaving] = useState(false)
 
   const load = async () => {
     try {
@@ -328,6 +329,7 @@ function PlantTypesTab() {
 
   const save = async () => {
     if (!editing.name?.trim()) return toast.error('Vui lòng nhập tên loại cây')
+    setSaving(true)
     try {
       const payload = { ...editing }
       delete payload.id
@@ -340,6 +342,8 @@ function PlantTypesTab() {
       load()
     } catch (e) {
       toast.error(e.response?.data?.detail || 'Lưu thất bại')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -396,8 +400,8 @@ function PlantTypesTab() {
             ))}
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
-            <button style={btnPrimary} onClick={save}>Lưu</button>
-            <button style={btnGhost} onClick={() => setEditing(null)}>Hủy</button>
+            <button style={btnPrimary} onClick={save} disabled={saving}>{saving ? 'Đang lưu...' : 'Lưu'}</button>
+            <button style={btnGhost} onClick={() => setEditing(null)} disabled={saving}>Hủy</button>
           </div>
         </div>
       )}

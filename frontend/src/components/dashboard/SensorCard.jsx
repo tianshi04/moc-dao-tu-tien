@@ -1,11 +1,13 @@
-export default function SensorCard({ label, value, unit, icon, min = 0, max = 100, warnBelow, warnAbove }) {
+export default function SensorCard({ label, value, unit, icon, min = 0, max = 100, quality }) {
   const hasData = value !== null && value !== undefined
 
   const getStatus = () => {
     if (!hasData) return 'none'
-    if (warnBelow !== undefined && value < warnBelow) return 'low'
-    if (warnAbove !== undefined && value > warnAbove) return 'high'
-    return 'ok'
+    if (value === -999 || value === -999.0) return 'error'
+    if (quality === 'DANGER') return 'high' // Use red for danger
+    if (quality === 'POOR') return 'low' // Use orange for poor
+    if (quality === 'FAIR') return 'low' // Use orange for fair
+    return 'ok' // EXCELLENT, GOOD
   }
 
   const status = getStatus()
@@ -15,9 +17,10 @@ export default function SensorCard({ label, value, unit, icon, min = 0, max = 10
     ok:   { bar: 'var(--green-400)', text: 'var(--text-secondary)' },
     low:  { bar: '#e67e22',          text: '#e67e22' },
     high: { bar: '#e74c3c',          text: '#e74c3c' },
+    error:{ bar: '#e74c3c',          text: '#e74c3c' },
   }
 
-  const pct = hasData ? Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100)) : 0
+  const pct = hasData && status !== 'error' ? Math.min(100, Math.max(0, ((value - min) / (max - min)) * 100)) : 0
   const col = statusColors[status]
 
   return (
@@ -41,9 +44,9 @@ export default function SensorCard({ label, value, unit, icon, min = 0, max = 10
         {hasData ? (
           <div style={{ display: 'flex', alignItems: 'baseline', gap: 3 }}>
             <span style={{ fontSize: 26, fontWeight: 500, color: col.text, fontFamily: 'var(--font-display)' }}>
-              {typeof value === 'number' ? value.toFixed(1) : value}
+              {status === 'error' ? 'ERR' : typeof value === 'number' ? value.toFixed(1) : value}
             </span>
-            <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{unit}</span>
+            {status !== 'error' && <span style={{ fontSize: 13, color: 'var(--text-muted)' }}>{unit}</span>}
           </div>
         ) : (
           <span style={{ fontSize: 22, color: 'var(--text-muted)', fontStyle: 'italic', fontFamily: 'var(--font-display)' }}>—</span>
@@ -65,11 +68,10 @@ export default function SensorCard({ label, value, unit, icon, min = 0, max = 10
         }} />
       </div>
 
-      {status === 'low' && (
-        <p style={{ fontSize: 11, color: '#e67e22', marginTop: 6 }}>⚠ Thấp hơn mức bình thường</p>
-      )}
-      {status === 'high' && (
-        <p style={{ fontSize: 11, color: '#e74c3c', marginTop: 6 }}>⚠ Cao hơn mức bình thường</p>
+      {(status === 'low' || status === 'high' || status === 'error') && (
+        <p style={{ fontSize: 11, color: col.text, marginTop: 6 }}>
+          ⚠ {status === 'error' ? 'Lỗi cảm biến (Mất kết nối)' : value > max ? 'Cao hơn mức bình thường' : value < min ? 'Thấp hơn mức bình thường' : 'Chỉ số không tối ưu'}
+        </p>
       )}
     </div>
   )
