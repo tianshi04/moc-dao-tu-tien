@@ -172,14 +172,16 @@ async def get_dashboard(db: AsyncSession, plant_id: UUID, user: User) -> dict:
 
     # Tính toán lại chất lượng dựa trên ngưỡng MỚI NHẤT của loại cây
     # Để nếu Admin vừa đổi ngưỡng, Dashboard sẽ phản hồi ngay lập tức
-    recalculated_qualities = classify_sensors_for_plant_type(sensor_data, plant.plant_type)
+    recalculated_qualities = classify_sensors_for_plant_type(
+        sensor_data, plant.plant_type
+    )
 
     for key, reading in readings.items():
         # Riêng ánh sáng lỗi -999.0 thì set cứng ERROR
         q = recalculated_qualities.get(key, reading.quality)
         if key != "light" and reading.value == -999.0:
             q = "ERROR"
-            
+
         sensors.append(
             {
                 "sensor_key": key,
